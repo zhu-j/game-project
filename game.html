@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas{
+    border:1px solid #d3d3d3;
+    background: url("forest.jpg") repeat;
+    background-size:cover;
+    margin-right:2%;
+    margin-left:15%;
+    margin-top:5%;
+    -webkit-animation: loader 64s steps(1000) infinite;
+    -moz-animation: loader 64s steps(1000) infinite;
+    -ms-animation: loader 64s steps(1000) infinite;
+    -o-animation: loader 64s steps(1000) infinite;
+    animation: loader 64s steps(1000) infinite;
+
+    /*Animation of background*/
+
+@-webkit-keyframes loader {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+@-moz-keyframes loader {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+@-ms-keyframes loader {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+@-o-keyframes loader {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+}
+@keyframes loader {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: -1000px 0;
+  }
+}
+
+html{
+  background-color: white;
+}
+button{
+  margin-left: 230px;
+margin-top:30px;
+}
+a{
+  margin-left: 50px;
+margin-top:20px;
+}
+h1{
+  font-family: monospace;
+}
+#home{
+  margin-top:10px;
+}
+</style>
+</head>
+<body onload="startGame()" id="body">
+<script>
+//keyboard control
+document.getElementById("body").onkeypress = function() {
+												accelerate(-0.5)
+												setTimeout(down, 50)
+												};
+
+function down() {
+	accelerate(0.05);
+}
+//CHARACTER VARIABLE
+var myGamePiece;
+//OBSTACLES
+var myObstacles = [];
+//COOKIES
+var myCoins = [];
+//SCORE COUNTER
+var coinCount = 0;
+//THE SCORE TEXT ITSELF
+var myScore;
+//SETTING UP THE DEATH ALERT
+var alerts = 0;
+//SETS UP GAME
+function startGame() {
+  myGamePiece = new component(50, 50, "pooh.gif", 300, 120, "image");
+    myGamePiece.gravity = 0.05;
+    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+    myGameArea.start();
+
+}
+//CREATES CANVAS
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 850;
+        this.canvas.height = 500;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+//THE THINGS IN THE GAME ARE CREATED HERE (STICKS, POOH BEAR, COOKIES)
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+//IMAGE CODE
+    if (type == "image") {
+      this.image = new Image();
+      this.image.src = color;
+    }
+
+    this.update = function() {
+      ctx = myGameArea.context;
+
+      if (type == "image") {
+        ctx.drawImage(this.image,
+          this.x,
+          this.y,
+          this.width, this.height);
+      }else if(this.type == "text") {
+          ctx.font = this.width + " " + this.height;
+          ctx.fillStyle = color;
+          ctx.fillText(this.text, this.x, this.y);
+      } else {
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+
+    }
+    this.hitBottom = function() {
+  		var skyLimit = 0;
+          var rockbottom = myGameArea.canvas.height - this.height;
+          if (this.y > rockbottom) {
+              this.y = rockbottom;
+              this.gravitySpeed = 0;
+          } else if (this.y < skyLimit) {
+  			this.y = skyLimit;
+  			this.gravitySpeed = 0;
+  		}
+}
+//DETECTS COLLISION
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x + (otherobj.width);
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+
+    }
+
+}
+
+//CHECKS FOR COLLISION
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+        if (alerts == 0){
+          //NOTIFIES OF DEATH
+            alert("Uh oh! The stick got you!\nPress play again to collect more cookies!");
+            alerts++;
+        }
+
+            return;
+
+        }}
+    for (i = 0; i < myCoins.length; i += 1) {
+        if (myGamePiece.crashWith(myCoins[i])) {
+                coinCount++;
+              //  ADDS TO COUNTER, AND REMOVES COIN WHEN TOUCHED
+myCoins[i].x = -400;
+            }
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        minHeight = 20;
+        maxHeight = 200;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+        minGap = 100;
+        maxGap = 300;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+        //GENERATES NEW OBSTACLES AND COOKIES
+        myObstacles.push(new component(20, height, "wood.png", x, 0, "image"));
+        myObstacles.push(new component(20, x - height - gap, "wood2.png", x, height + gap,"image"));
+        myCoins.push(new component(30, 30, "biscuit.png", x, height + (gap/2), "image"));
+
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].x += -1;
+        myObstacles[i].update();
+    }
+    for (i = 0; i < myCoins.length; i += 1) {
+        myCoins[i].x += -1;
+        myCoins[i].update();
+    }
+
+//DISPLAY SCORE
+    myScore.text="SCORE: " + coinCount +" cookies eaten";
+    myScore.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+//SETS GRAVITY IN THE GAME
+function accelerate(n) {
+    myGamePiece.gravity = n;
+}
+
+
+
+</script>
+
+<br>
+<!-- BUTTONS! -->
+<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)" name="fly">FLY</button>
+<a href="summativeICS.html"><button>Back</button></a>
+<a href="game.html" name="home"><button>Play Again</button></a>
+
+</body>
+</html>
