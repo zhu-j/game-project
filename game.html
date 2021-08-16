@@ -84,9 +84,9 @@ h1{
 <script>
 //keyboard control
 document.getElementById("body").onkeypress = function() {
-												accelerate(-0.5)
-												setTimeout(down, 50)
-												};
+	accelerate(-0.5)
+	setTimeout(down, 50)
+				};
 
 function down() {
 	accelerate(0.05);
@@ -96,7 +96,7 @@ var myGamePiece;
 //OBSTACLES
 var myObstacles = [];
 //COOKIES
-var myCoins = [];
+var cookies = [];
 //SCORE COUNTER
 var coinCount = 0;
 //THE SCORE TEXT ITSELF
@@ -213,11 +213,11 @@ function updateGameArea() {
             return;
 
         }}
-    for (i = 0; i < myCoins.length; i += 1) {
-        if (myGamePiece.crashWith(myCoins[i])) {
-                coinCount++;
+    for (i = 0; i < cookies.length; i += 1) {
+        if (myGamePiece.crashWith(cookies[i])) {
+                cookiesCount++;
               //  ADDS TO COUNTER, AND REMOVES COIN WHEN TOUCHED
-myCoins[i].x = -400;
+		cookies[i].x = -400;
             }
     }
     myGameArea.clear();
@@ -233,20 +233,20 @@ myCoins[i].x = -400;
         //GENERATES NEW OBSTACLES AND COOKIES
         myObstacles.push(new component(20, height, "wood.png", x, 0, "image"));
         myObstacles.push(new component(20, x - height - gap, "wood2.png", x, height + gap,"image"));
-        myCoins.push(new component(30, 30, "biscuit.png", x, height + (gap/2), "image"));
+        cookies.push(new component(30, 30, "biscuit.png", x, height + (gap/2), "image"));
 
     }
     for (i = 0; i < myObstacles.length; i += 1) {
         myObstacles[i].x += -1;
         myObstacles[i].update();
     }
-    for (i = 0; i < myCoins.length; i += 1) {
-        myCoins[i].x += -1;
-        myCoins[i].update();
+    for (i = 0; i < cookies.length; i += 1) {
+        cookies[i].x += -1;
+        cookies[i].update();
     }
 
 //DISPLAY SCORE
-    myScore.text="SCORE: " + coinCount +" cookies eaten";
+    myScore.text="SCORE: " + cookiesCount +" cookies eaten";
     myScore.update();
     myGamePiece.newPos();
     myGamePiece.update();
