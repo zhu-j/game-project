@@ -1,4 +1,4 @@
-# flappy-winnie-the-pooh
+# game-project
 A Flappy Bird like game but with Winnie the Pooh munching cookies
 
 Code written using JavaScript, HTML and CSS
